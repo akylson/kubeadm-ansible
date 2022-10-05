@@ -1,4 +1,14 @@
 ---
+- name: Disabling firewalld
+  service: name=firewalld state=stopped enabled=False
+
+- name: Deleting containerd file
+  file:
+    state: absent
+    path: /etc/containerd/config.toml
+
+- name: Restarting containerd
+  service: name=containerd state=restarted 
 
 - name: Reset Kubernetes component
   shell: "kubeadm reset --force --cri-socket=/var/run/{{ container_runtime }}/{{ container_runtime }}.sock"
@@ -15,6 +25,7 @@
                  --cri-socket=/var/run/{{ container_runtime }}/{{ container_runtime }}.sock \
                  {{ kubeadm_opts }} \
                  {{ init_opts }}
+
   register: init_cluster
   # See: https://github.com/jetstack/cert-manager/issues/2640 with using kubeadm + calico + cert-manager
   environment:

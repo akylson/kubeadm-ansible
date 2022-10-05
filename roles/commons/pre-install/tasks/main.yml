@@ -39,3 +39,7 @@
     name: kubelet
     daemon_reload: yes
     enabled: yes
+
+- name: "update hostnames"
+  hostname:
+    name: "{{ new_hostname }}"
